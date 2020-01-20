@@ -1,5 +1,15 @@
-# NgOperatingHeavilyDynamicUis
+# Reactive counter control
 
+This project shows an example of implementing a dynamic counter taking ideas from closed-loop/feedback control systems.
+
+A feedback control system feeds its output back to its input so that its state is influenced by not only the users but also the side-effects generated from their interactions. For example, when the user starts the count, the side-effects are the timer ticks comming from some async process. The ticks are directed back to the count input port to update its value.
+
+Some other design choices:
+-   Strict separation of logic and view (for me this is more of a must)
+-   Events/data never leave the control loop until shown on UI
+-   Reactive programming, in particular rxjs, is used here to model the control loop
+
+# Running with Angular
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.0.3.
 
 ## Development server

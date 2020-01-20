@@ -9,6 +9,12 @@ Some other design choices:
 -   Events/data never leave the control loop until shown on UI
 -   Reactive programming, in particular rxjs, is used here to model the control loop
 
+# References
+
+-   [Operate heavily dynamic uis](https://github.com/BioPhoton/ng-operate-heavily-dynamic-uis)
+-   Feedback control systems
+-   Constructing the User Interface with Statecharts by Ian Horrocks
+
 # Running with Angular
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.0.3.
 

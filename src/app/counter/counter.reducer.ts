@@ -9,12 +9,13 @@ import {
 } from './counter.events';
 
 /**
- * Pure function (no side effects) that computes next state given
- * current state and latest event.
+ * Pure function that computes next state given current
+ * state and latest event.
  */
 export function nextState(
   state: CounterState, event: CounterEvent
 ): CounterState {
+
   if (event instanceof Tick) {
     const diff = state.step * (state.up ? 1 : -1);
     return {...state, count: state.count + diff};

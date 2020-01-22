@@ -1,0 +1,3 @@
+# Write one test to cover the main logic (CounterViewProcessor?)
+
+# Let Processor implement the output-side (SubscriptionLike maybe?)

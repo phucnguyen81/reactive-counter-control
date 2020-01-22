@@ -5,10 +5,8 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import {
-  CounterViewOutput, CounterViewControl
-} from
-'./counter.view.control';
+import { CounterViewControl } from './counter-view.control';
+import { CounterViewOutput } from './counter-view.io';
 
 @Component({
   selector: 'app-counter',

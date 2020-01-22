@@ -1,5 +1,7 @@
-import { Subject, Observable, merge } from 'rxjs';
-import { scan, shareReplay, map } from 'rxjs/operators';
+import { Observable, pipe, EMPTY } from 'rxjs';
+import { scan } from 'rxjs/operators';
+
+import { Processor } from './processor';
 
 import {
   CounterEvent, Init, Start, Pause, Reset, CountUp,
@@ -12,18 +14,19 @@ import {
 
 import { nextState } from './counter.reducer';
 
-export class CounterCoreControl {
-  private readonly input$ = new Subject<CounterEvent>();
-
-  // output is state, use shareReplay to get the last state
-  readonly output$: Observable<CounterState> = this.input$.pipe(
-    scan<CounterEvent, CounterState>(
-      nextState, DEFAULT_INITIAL_STATE
-    ),
-    shareReplay(1)
-  );
-
-  send(event: CounterEvent): void { this.input$.next(event); }
+export class CounterProcessor extends
+  Processor<CounterEvent, CounterState>
+{
+  constructor(
+    private readonly counterEvent$: Observable<CounterEvent>
+  ) {
+    super(
+      counterEvent$,
+      scan<CounterEvent, CounterState>(
+        nextState, DEFAULT_INITIAL_STATE
+      )
+    )
+  }
 
   init(initialState?: CounterInitialState): void {
     this.send(new Init(initialState || DEFAULT_INITIAL_STATE));

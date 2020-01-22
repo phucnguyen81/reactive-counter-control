@@ -1,57 +1,50 @@
-import { Subject, Observable, merge } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, Observable, Subscription, merge, EMPTY } from 'rxjs';
+import { takeUntil, shareReplay } from 'rxjs/operators';
 
 import { CounterState, CounterInitialState } from './counter.state';
-import { CounterEvent } from './counter.events';
+import { CounterEvent, Tick } from './counter.events';
 
-import { CounterCoreControl } from './counter.core.control';
-import { CounterTickControl } from './counter.tick.control';
-import { CounterSetToControl } from './counter.setto.control';
+import { Processor } from './processor';
+import { CounterProcessor } from './counter.processor';
+import { CounterTickControl } from './counter-tick.control';
+import { CounterSetToControl } from './counter-setto.control';
 
 export class CounterControl {
-  private readonly coreControl = new CounterCoreControl();
 
-  readonly output$: Observable<CounterState> = this.coreControl.output$;
+  private readonly counter = new CounterProcessor(EMPTY);
 
-  private readonly tickControl = new CounterTickControl(this.output$);
+  // shareReplay to share with tick and setTo
+  readonly output$ = this.counter.output$.pipe(shareReplay(1));
 
-  private readonly setToControl = new CounterSetToControl(this.output$);
+  private readonly tick = new CounterTickControl(this.output$);
 
-  readonly setToValue$: Observable<number> = this.setToControl.value$;
+  private readonly setTo = new CounterSetToControl(this.output$);
+
+  readonly setToValue$: Observable<number> = this.setTo.value$;
 
   private readonly effect$: Observable<CounterEvent> =
     merge<CounterEvent>(
-      this.tickControl.output$,
-      this.setToControl.output$,
+      this.tick.output$,
+      this.setTo.output$,
     );
 
-  private readonly close$ = new Subject<any>();
+  subscribe(): Subscription {
+    return this.effect$.subscribe(this.counter);
+  }
 
   init(initialState?: CounterInitialState): void {
-    this.close();
-    this.effect$.pipe(takeUntil(this.close$)).subscribe(
-      event => this.coreControl.send(event),
-      // TODO add special error handling for this case
-      error => console.error(
-        'This error should be handled inside effect', error
-      ),
-    );
-    this.coreControl.init(initialState);
+    this.counter.init(initialState);
   }
 
-  close(): void {
-    this.close$.next(true);
-  }
+  start(): void { this.counter.start(); }
+  pause(): void { this.counter.pause(); }
+  reset(): void { this.counter.reset(); }
+  countUp(): void { this.counter.countUp(); }
+  countDown(): void { this.counter.countDown(); }
+  tickSpeed(speed: number): void { this.counter.tickSpeed(speed); }
+  countDiff(diff: number): void { this.counter.countDiff(diff); }
+  setColor(color: string): void { this.counter.setColor(color); }
 
-  start(): void { this.coreControl.start(); }
-  pause(): void { this.coreControl.pause(); }
-  reset(): void { this.coreControl.reset(); }
-  countUp(): void { this.coreControl.countUp(); }
-  countDown(): void { this.coreControl.countDown(); }
-  tickSpeed(speed: number): void { this.coreControl.tickSpeed(speed); }
-  countDiff(diff: number): void { this.coreControl.countDiff(diff); }
-  setColor(color: string): void { this.coreControl.setColor(color); }
-
-  saveSetTo(): void { this.setToControl.save(); }
-  updateSetTo(value: number): void { this.setToControl.update(value); }
+  updateSetTo(value: number): void { this.setTo.update(value); }
+  saveSetTo(): void { this.setTo.save(); }
 }

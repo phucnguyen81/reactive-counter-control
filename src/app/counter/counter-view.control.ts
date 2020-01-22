@@ -1,30 +1,31 @@
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 
 import { CounterControl } from './counter.control';
 import { CounterState } from './counter.state';
-
-export class CounterViewOutput {
-  readonly digits = String(this.state.count).split('');
-  readonly color = this.state.color;
-  readonly speed = this.state.speed;
-  readonly step = this.state.step;
-
-  constructor(private state: CounterState) { }
-}
+import { CounterViewOutput } from './counter-view.io';
 
 export class CounterViewControl {
   private readonly control = new CounterControl();
 
   readonly output$: Observable<CounterViewOutput> =
     this.control.output$.pipe(
-      map(state => { return new CounterViewOutput(state); })
+      map<CounterState, CounterViewOutput>(state => {
+        return {
+          color: state.color,
+          digits: String(state.count).split(''),
+          speed: state.speed,
+          step: state.step,
+        };
+      }),
+      shareReplay(1)
     );
 
   readonly setToValue$: Observable<number> = this.control.setToValue$;
 
+  private readonly subscription = this.control.subscribe();
   init(): void { this.control.init(); }
-  destroy(): void { this.control.close(); }
+  destroy(): void { this.subscription.unsubscribe(); }
 
   start(): void { this.control.start(); }
   pause(): void { this.control.pause(); }

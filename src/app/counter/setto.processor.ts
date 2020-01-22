@@ -1,9 +1,7 @@
-import { Subject, Observable, OperatorFunction, merge, pipe } from 'rxjs';
-import { scan, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { scan } from 'rxjs/operators';
 
 import { Processor } from './processor';
-import { SetCount } from './counter.events';
-import { CounterState } from './counter.state';
 import { SetToInput, SetToOutput } from './setto.io';
 
 export class SetToProcessor extends Processor<SetToInput, SetToOutput> {

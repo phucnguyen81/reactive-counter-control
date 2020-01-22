@@ -1,10 +1,9 @@
-import { Subject, Observable, Subscription, merge, EMPTY } from 'rxjs';
-import { takeUntil, shareReplay } from 'rxjs/operators';
+import { Observable, Subscription, merge, EMPTY } from 'rxjs';
+import { shareReplay } from 'rxjs/operators';
 
 import { CounterState, CounterInitialState } from './counter.state';
 import { CounterEvent, Tick } from './counter.events';
 
-import { Processor } from './processor';
 import { CounterProcessor } from './counter.processor';
 import { CounterTickControl } from './counter-tick.control';
 import { CounterSetToControl } from './counter-setto.control';

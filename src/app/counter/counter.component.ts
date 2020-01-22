@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 import { CounterViewControl } from './counter-view.control';
 import { CounterViewOutput } from './counter-view.io';

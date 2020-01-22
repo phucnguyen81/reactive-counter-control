@@ -1,7 +1,6 @@
-import { Observable, pipe } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map, mapTo } from 'rxjs/operators';
 
-import { Processor } from './processor';
 import { CounterState } from './counter.state';
 import { Tick } from './counter.events';
 import { TickInput, TickOutput } from './tick.io';

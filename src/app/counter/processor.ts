@@ -1,9 +1,7 @@
 import {
-  Subject, Observable, Observer, Subscriber, Subscription,
-  OperatorFunction, merge, EMPTY
+  Subject, Observable, Observer,
+  OperatorFunction, merge
 } from 'rxjs';
-
-import { takeUntil } from 'rxjs/operators';
 
 export class Processor<I, O> implements Observer<I> {
   private readonly input = new Subject<I>();

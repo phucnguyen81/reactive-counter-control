@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 import { map, shareReplay, catchError } from 'rxjs/operators';
 
 import { CounterControl } from './counter.control';
-import { CounterState } from './counter.state';
+import { CounterState } from './counter.io';
 import { CounterViewOutput } from './counter-view.io';
 
 export class CounterViewControl {

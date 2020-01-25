@@ -1,8 +1,7 @@
 import { Observable } from 'rxjs';
 import { map, mapTo } from 'rxjs/operators';
 
-import { CounterState } from './counter.state';
-import { Tick } from './counter.events';
+import { CounterEvent, CounterState } from './counter.io';
 import { TickInput, TickOutput } from './tick.io';
 import { TickProcessor } from './tick.processor';
 
@@ -16,7 +15,7 @@ export class CounterTickControl {
   private readonly tickProcessor = new TickProcessor(this.tickInput$);
 
   readonly output$ = this.tickProcessor.output$.pipe(
-    mapTo<TickOutput, Tick>(new Tick()),
+    mapTo<TickOutput, CounterEvent>({tick: true})
   );
 
   constructor(

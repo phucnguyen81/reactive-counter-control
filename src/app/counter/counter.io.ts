@@ -1,3 +1,18 @@
+export class CounterEvent {
+  init?: CounterInitialState;
+  error?: Error;
+  start?: any;
+  pause?: any;
+  reset?: any;
+  tick?: any;
+  countUp?: any;
+  countDown?: any;
+  tickSpeed?: number | undefined;
+  countDiff?: number | undefined;
+  setCount?: number | undefined;
+  color?: string;
+}
+
 export class CounterInitialState {
   count: number;
   setTo: number;

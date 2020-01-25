@@ -1,8 +1,9 @@
 import { Observable, Subscription, merge, EMPTY } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
 
-import { CounterState, CounterInitialState } from './counter.state';
-import { CounterEvent, Tick } from './counter.events';
+import {
+  CounterEvent, CounterState, CounterInitialState
+} from './counter.io';
 
 import { CounterProcessor } from './counter.processor';
 import { CounterTickControl } from './counter-tick.control';

@@ -1,25 +1,24 @@
 import { Observable, pipe } from 'rxjs';
 import { map, distinctUntilChanged, filter } from 'rxjs/operators';
 
-import { Processor } from './processor';
-import { CounterState } from './counter.state';
-import { SetCount } from './counter.events';
+import { CounterEvent, CounterState } from './counter.io';
 import { SetToProcessor } from './setto.processor';
 import { SetToInput, SetToOutput } from './setto.io';
 
 export class CounterSetToControl {
-  private readonly setToInput$ = this.counterState$.pipe(
-    map<CounterState, number>(state => state.setTo),
-    distinctUntilChanged(),
-    map<number, SetToInput>(value => ({value}))
-  );
+  private readonly setToInput$: Observable<SetToInput> =
+    this.counterState$.pipe(
+      map<CounterState, number>(state => state.setTo),
+      distinctUntilChanged(),
+      map<number, SetToInput>(value => ({value}))
+    );
 
   private readonly setToProcessor = new SetToProcessor(this.setToInput$);
 
   readonly output$ = this.setToProcessor.output$.pipe(
     filter<SetToOutput>(output => output.saved),
-    map<SetToOutput, SetCount>(output => {
-      return new SetCount(output.value);
+    map<SetToOutput, CounterEvent>(output => {
+      return {setCount: output.value};
     })
   );
 

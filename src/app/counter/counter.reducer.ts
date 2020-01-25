@@ -1,12 +1,7 @@
 import {
-  CounterInitialState, CounterState, DEFAULT_INITIAL_STATE
-} from './counter.state';
-
-import {
-  CounterEvent, Init, Start, Pause, Reset,
-  CountUp, CountDown, TickSpeed, CountDiff,
-  Color, SetCount, Tick
-} from './counter.events';
+  CounterEvent, CounterInitialState, CounterState,
+  DEFAULT_INITIAL_STATE
+} from './counter.io';
 
 /**
  * Pure function that computes next state given current
@@ -15,46 +10,44 @@ import {
 export function nextState(
   state: CounterState, event: CounterEvent
 ): CounterState {
-
-  if (event instanceof Tick) {
+  if (event.tick) {
     const diff = state.step * (state.up ? 1 : -1);
-    return {...state, count: state.count + diff};
+    state = {...state, count: state.count + diff};
   }
-  if (event instanceof Init) {
-    const initState = event.initialState;
-    return {
+  if (event.init) {
+    const initState = event.init;
+    state = {
       ...state,
       ...initState,
       initialState: {...initState}
     };
   }
-  if (event instanceof Start) {
-    return {...state, running: true};
+  if (event.start) {
+    state = {...state, running: true};
   }
-  if (event instanceof Pause) {
-    return {...state, running: false};
+  if (event.pause) {
+    state = {...state, running: false};
   }
-  if (event instanceof Reset) {
-    return {...state, ...state.initialState};
+  if (event.reset) {
+    state = {...state, ...state.initialState};
   }
-  if (event instanceof CountUp) {
-    return {...state, up: true};
+  if (event.countUp) {
+    state = {...state, up: true};
   }
-  if (event instanceof CountDown) {
-    return {...state, up: false};
+  if (event.countDown) {
+    state = {...state, up: false};
   }
-  if (event instanceof TickSpeed) {
-    return {...state, speed: event.tickSpeed}
+  if (event.tickSpeed !== undefined) {
+    state = {...state, speed: event.tickSpeed}
   }
-  if (event instanceof CountDiff) {
-    return {...state, step: event.countDiff}
+  if (event.countDiff !== undefined) {
+    state = {...state, step: event.countDiff}
   }
-  if (event instanceof SetCount) {
-    const count = event.count;
-    return {...state, count: count, setTo: count};
+  if (event.setCount !== undefined) {
+    state = {...state, count: event.setCount, setTo: event.setCount};
   }
-  if (event instanceof Color) {
-    return {...state, color: event.color};
+  if (event.color !== undefined) {
+    state = {...state, color: event.color};
   }
   return state;
 }

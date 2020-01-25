@@ -1,5 +1,6 @@
+# Remove the usage of Processor
+No need to complicate things with inheritance.
+
+# Write regression test (UI/marble test?)
+
 # Extract the reset control
-
-# Write one test to cover the main logic (CounterViewProcessor?)
-
-# Let Processor implement the output-side (SubscriptionLike maybe?)

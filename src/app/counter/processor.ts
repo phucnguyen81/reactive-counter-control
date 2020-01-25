@@ -1,37 +1,43 @@
 import {
-  Subject, Observable, Observer,
+  Subject, Observable, Observer, EMPTY,
   OperatorFunction, merge
 } from 'rxjs';
 
 export class Processor<I, O> implements Observer<I> {
-  private readonly input = new Subject<I>();
+  private readonly inputSubject = new Subject<I>();
 
-  readonly output$: Observable<O> = merge(
-    this.input, this.controlInput
-  ).pipe(this.process);
+  private input$: Observable<I> = this.inputSubject.asObservable();
 
-  get closed(): boolean {
-    return this.input.closed;
+  output$: Observable<O> = this.input$.pipe(this.process);
+
+  constructor(private readonly process: OperatorFunction<I, O>) {}
+
+  receive(inputControl$: Observable<I>): void {
+    this.input$ = merge(this.input$, inputControl$);
+    this.output$ = this.input$.pipe(this.process);
   }
 
-  constructor(
-    private readonly controlInput: Observable<I>,
-    private readonly process: OperatorFunction<I, O>
-  ) { }
+  connect(processor: Processor<O, any>): void {
+    processor.receive(this.output$);
+  }
 
   send(event: I): void {
-    this.input.next(event);
+    this.inputSubject.next(event);
+  }
+
+  get closed(): boolean {
+    return this.inputSubject.closed;
   }
 
   next(event: I): void {
-    this.input.next(event);
+    this.inputSubject.next(event);
   }
 
   error(err: any): void {
-    this.input.error(err);
+    this.inputSubject.error(err);
   }
 
   complete(): void {
-    this.input.complete();
+    this.inputSubject.complete();
   }
 }

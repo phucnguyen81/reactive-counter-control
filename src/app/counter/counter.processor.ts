@@ -21,11 +21,11 @@ export class CounterProcessor extends
     private readonly counterEvent$: Observable<CounterEvent>
   ) {
     super(
+      counterEvent$,
       scan<CounterEvent, CounterState>(
         nextState, DEFAULT_INITIAL_STATE
       )
     );
-    this.receive(this.counterEvent$);
   }
 
   init(initialState?: CounterInitialState): void {

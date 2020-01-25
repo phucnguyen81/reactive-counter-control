@@ -7,6 +7,7 @@ import { TickInput, TickOutput } from './tick.io';
 export class TickProcessor extends Processor<TickInput, TickOutput> {
   constructor(tickInput$: Observable<TickInput>) {
     super(
+      tickInput$,
       pipe(
         distinctUntilChanged(
           (prevInput: TickInput, input: TickInput) => {
@@ -19,7 +20,5 @@ export class TickProcessor extends Processor<TickInput, TickOutput> {
         mapTo(new TickOutput()),
       )
     );
-
-    this.receive(tickInput$);
   }
 }

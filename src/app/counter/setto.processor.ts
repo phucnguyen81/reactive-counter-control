@@ -7,6 +7,7 @@ import { SetToInput, SetToOutput } from './setto.io';
 export class SetToProcessor extends Processor<SetToInput, SetToOutput> {
   constructor(private readonly setToInput$: Observable<SetToInput>) {
     super(
+      setToInput$,
       scan<SetToInput, SetToOutput>((output, input) => {
         const merged = {
           ...output,
@@ -18,8 +19,6 @@ export class SetToProcessor extends Processor<SetToInput, SetToOutput> {
         };
       }, new SetToOutput())
     );
-
-    this.receive(setToInput$);
   }
 
   update(value: number): void {

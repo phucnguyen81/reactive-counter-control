@@ -17,8 +17,7 @@
 <input id="input-set-to"
   type="number" min=0
   [value]="setToValue$ | async"
-  (input)="updateSetTo($event.target.value)"
-/>
+  (input)="updateSetTo($event.target.value)"/>
 
 <button type="button" (click)="reset()">Reset</button>
 
@@ -33,15 +32,13 @@
 <input id="input-tick-speed"
   type="number" min=0
   value="{{view.speed}}"
-  (input)="tickSpeed($event.target.value)"
- />
+  (input)="tickSpeed($event.target.value)"/>
 
 <label>Count Diff</label>
 <input id="input-count-diff"
   type="number" min=0
   value="{{view.step}}"
-  (input)="countDiff($event.target.value)"
-/>
+  (input)="countDiff($event.target.value)"/>
 
 <br/>
 

@@ -1,5 +1,5 @@
 import {
-  Subject, Observable, Observer, EMPTY,
+  Subject, Observable, Observer,
   OperatorFunction, merge
 } from 'rxjs';
 

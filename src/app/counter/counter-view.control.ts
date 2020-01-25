@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import { map, shareReplay, catchError } from 'rxjs/operators';
 
 import { CounterControl } from './counter.control';
 import { CounterState } from './counter.state';
@@ -18,7 +18,12 @@ export class CounterViewControl {
           step: state.step,
         };
       }),
-      shareReplay(1)
+      shareReplay(1),
+      // TODO proper logging to report errors
+      catchError((err, caught) => {
+        console.error('Unhandled error', err);
+        return caught;
+      })
     );
 
   readonly setToValue$: Observable<number> = this.control.setToValue$;

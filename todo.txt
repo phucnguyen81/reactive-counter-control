@@ -1,6 +1,3 @@
-# Remove the usage of Processor
-No need to complicate things with inheritance.
-
 # Write regression test (UI/marble test?)
 
 # Extract the reset control

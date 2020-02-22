@@ -1,16 +1,16 @@
 # Reactive counter control
 
-Dynamic counter implementation taking ideas from closed-loop/feedback control systems.
+Dynamic counter implementation taking ideas from [Operate heavily dynamic uis](https://github.com/BioPhoton/ng-operate-heavily-dynamic-uis) and closed-loop/feedback control systems.
 
 A feedback control system continuouly sends and receives signals from its environment.
 The system's state is influenced by not only the inputs but also the side-effects generated from its output.
-For example, when the user starts the counter, the side-effects are the timer ticks comming from async process.
-The ticks are directed back to the counter input port to update its value.
+For example, when the counter is running, the side-effects are the timer ticks comming from async process.
+The ticks are directed back to the input port to update the counter's state.
 
 Other design choices:
 -   Strict separation of logic and view
 -   Events/data never leave the control loop until shown on UI
--   Reactive programming, in particular rxjs, is used here to model the control loop
+-   ReactiveX, in particular rxjs, is used to model the control loop
 
 # References
 

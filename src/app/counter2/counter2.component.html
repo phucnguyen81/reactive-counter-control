@@ -1,0 +1,49 @@
+<ng-container *ngIf="view$ | async as view">
+
+<div class="countdownHolder">
+  <span class="position" *ngFor="let digit of view.digits">
+    <span class="digit static" [style.color]="view.color">
+      {{digit}}
+    </span>
+  </span>
+</div>
+
+<button type="button" (click)="start()">Start</button>
+<button type="button" (click)="pause()">Pause</button>
+
+<br/>
+
+<button type="button" (click)="saveSetTo()">Set To</button>
+<input id="input-set-to"
+  type="number" min=0
+  [value]="view.inputSetTo"
+  (input)="inputSetTo($event.target.value)"/>
+
+<button type="button" (click)="reset()">Reset</button>
+
+<br/>
+
+<button type="button" (click)="countUp()">Count Up</button>
+<button type="button" (click)="countDown()">Count Down</button>
+
+<br/>
+
+<label>Tick Speed</label>
+<input id="input-tick-speed"
+  type="number" min=0
+  value="{{view.speed}}"
+  (input)="tickSpeed($event.target.value)"/>
+
+<label>Count Diff</label>
+<input id="input-count-diff"
+  type="number" min=0
+  value="{{view.step}}"
+  (input)="countDiff($event.target.value)"/>
+
+<br/>
+
+<button type="button" (click)="setColor('red')">Red</button>
+<button type="button" (click)="setColor('blue')">Blue</button>
+<button type="button" (click)="setColor('')">None</button>
+
+<ng-container>

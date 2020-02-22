@@ -5,6 +5,10 @@ import {
 import * as rx from 'rxjs';
 import * as op from 'rxjs/operators';
 
+import { Input, State, View, createState } from './counter.io';
+import { reduceState } from './counter.reducer';
+import { mapNumber } from './counter.operators';
+
 @Component({
   selector: 'app-counter',
   templateUrl: './counter.component.html',
@@ -44,14 +48,11 @@ export class CounterComponent implements OnInit, OnDestroy {
   color$ = new rx.Subject<string>();
   setColor(value: string): void { this.color$.next(value); }
 
-  initialState = new State();
+  initialState: State = createState({inputSetTo: 1});
 
-  // external port
-  intent = new rx.Subject<Intent>();
+  externalInput = new rx.Subject<Input>();
 
-  // merge all input streams as Intent
-  intent$: rx.Observable<Intent> = rx.merge(
-    this.intent.asObservable(),
+  internalInput$: rx.Observable<Input> = rx.merge(
     this.start$.pipe(op.map(x => ({start: true}))),
     this.pause$.pipe(op.map(x => ({pause: true}))),
     this.saveSetTo$.pipe(op.map(x => ({saveSetTo: true}))),
@@ -70,14 +71,20 @@ export class CounterComponent implements OnInit, OnDestroy {
     this.color$.pipe(op.map(color => ({color}))),
   );
 
-  // reduce Input to State
-  state$: rx.Observable<State> = this.intent$.pipe(
+  // collect all inputs
+  input$: rx.Observable<Input> = rx.merge(
+    this.externalInput.asObservable(),
+    this.internalInput$,
+  );
+
+  // state is reduced from input
+  state$: rx.Observable<State> = this.input$.pipe(
     op.scan(reduceState, this.initialState),
     op.startWith(this.initialState)
   );
 
   // observe state to trigger side-effect
-  tick$: rx.Observable<Intent> = this.state$.pipe(
+  tick$: rx.Observable<Input> = this.state$.pipe(
     op.distinctUntilChanged((oldState, newState) => (
       oldState.active === newState.active
       && oldState.speedInMs === newState.speedInMs
@@ -102,10 +109,9 @@ export class CounterComponent implements OnInit, OnDestroy {
 
   subscription = new rx.Subscription();
 
-  constructor() { }
-
   ngOnInit(): void {
-    this.subscription.add(this.tick$.subscribe(this.intent));
+    // create feedback loop for side-effect
+    this.subscription.add(this.tick$.subscribe(this.externalInput));
   }
 
   ngOnDestroy(): void {
@@ -113,86 +119,3 @@ export class CounterComponent implements OnInit, OnDestroy {
   }
 }
 
-class Intent {
-  tick?: any;
-  start?: any;
-  pause?: any;
-  inputSetTo?: number;
-  saveSetTo?: any;
-  reset?: State;
-  countUp?: any;
-  countDown?: any;
-  tickSpeed?: number;
-  countDiff?: number;
-  color?: string;
-  error?: any;
-}
-
-class State {
-  count: number = 0;
-  active: boolean = false;
-  inputSetTo: number = 0;
-  saveSetTo?: number;
-  countUp: boolean = true;
-  step: number = 1;
-  speedInMs: number = 1000;
-  color: string = '';
-}
-
-class View {
-  digits: string[] = [];
-  inputSetTo: number = 1;
-  speed: number = 1000;
-  step: number = 1;
-  color: string = '';
-}
-
-function mapNumber(): rx.OperatorFunction<any, number> {
-  return function(input$: rx.Observable<any>): rx.Observable<number> {
-    return input$.pipe(
-      op.map(input => Number(input)),
-      op.filter(num => (!isNaN(num))),
-    );
-  }
-}
-
-function reduceState(state: State, event: Intent): State {
-  if (event.tick) {
-    const sign = (state.countUp ? 1 : -1);
-    return {...state, count: (state.count + (sign * state.step))};
-  }
-  if (event.start && !state.active) {
-    return {...state, active: true};
-  }
-  if (event.pause && state.active) {
-    return {...state, active: false};
-  }
-  if (event.reset) {
-    return {...state, ...(event.reset)};
-  }
-  if (event.inputSetTo !== undefined) {
-    return {...state, inputSetTo: event.inputSetTo};
-  }
-  if ((event.saveSetTo !== undefined)
-    && (state.inputSetTo !== undefined)) {
-    return {...state,
-      count: state.inputSetTo, inputSetTo: state.inputSetTo
-    };
-  }
-  if (event.countUp && !state.countUp) {
-    return {...state, countUp: true};
-  }
-  if (event.countDown && state.countUp) {
-    return {...state, countUp: false};
-  }
-  if (event.tickSpeed !== undefined) {
-    return {...state, speedInMs: event.tickSpeed};
-  }
-  if (event.countDiff !== undefined) {
-    return {...state, step: event.countDiff};
-  }
-  if (event.color !== undefined) {
-    return {...state, color: event.color};
-  }
-  return state;
-}

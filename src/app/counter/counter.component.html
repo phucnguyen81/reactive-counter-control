@@ -1,4 +1,4 @@
-<ng-container *ngIf="output$ | async as view">
+<ng-container *ngIf="view$ | async as view">
 
 <div class="countdownHolder">
   <span class="position" *ngFor="let digit of view.digits">
@@ -16,8 +16,8 @@
 <button type="button" (click)="saveSetTo()">Set To</button>
 <input id="input-set-to"
   type="number" min=0
-  [value]="setToValue$ | async"
-  (input)="updateSetTo($event.target.value)"/>
+  [value]="view.inputSetTo"
+  (input)="inputSetTo($event.target.value)"/>
 
 <button type="button" (click)="reset()">Reset</button>
 

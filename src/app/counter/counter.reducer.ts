@@ -36,7 +36,9 @@ export function reduceState(state: State, event: Input): State {
     return {...state, step: event.countDiff};
   }
   if (event.color !== undefined) {
-    return {...state, color: event.color};
+    return {...state,
+      color: (event.color === state.color) ? '' : event.color
+    };
   }
   return state;
 }

@@ -5,7 +5,7 @@ Dynamic counter implementation taking ideas from [Operate heavily dynamic uis](h
 A feedback control system continuouly sends and receives signals from its environment.
 The system's state is influenced by not only the inputs but also the side-effects generated from its output.
 For example, when the counter is running, the side-effects are the timer ticks comming from async process.
-The ticks are directed back to the input port to update the counter's state.
+The ticks are directed back to the input port to drive the counter's state.
 
 Other design choices:
 -   Strict separation of logic and view
@@ -19,6 +19,7 @@ Other design choices:
 -   The book `Constructing the User Interface with Statecharts` by Ian Horrocks
 
 # Running with Angular
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.0.3.
 
 ## Development server

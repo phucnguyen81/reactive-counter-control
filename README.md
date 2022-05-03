@@ -21,6 +21,7 @@ Other design choices:
 # Running with Angular
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.0.3.
+It is last tested to run on Node v16.12.0.
 
 ## Development server
 

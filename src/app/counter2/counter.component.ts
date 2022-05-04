@@ -12,17 +12,18 @@ import { TickService } from './tick.service';
   selector: 'app-counter',
   templateUrl: './counter.component.html',
   styleUrls: ['./counter.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [ TickService ],
 })
 export class CounterComponent implements OnInit, OnDestroy {
 
-  private initialState: State = createState({inputSetTo: 1});
+  private readonly initialState: State = createState({inputSetTo: 1});
 
   // The state of the component
-  private state$ = new rx.BehaviorSubject<State>(this.initialState);
+  private readonly state$ = new rx.BehaviorSubject<State>(this.initialState);
 
   // map State to View
-  view$: rx.Observable<View> = this.state$.pipe(
+  readonly view$: rx.Observable<View> = this.state$.pipe(
     op.map(state => ({
       digits: String(state.count).split(''),
       inputSetTo: state.inputSetTo,
@@ -33,16 +34,16 @@ export class CounterComponent implements OnInit, OnDestroy {
     op.shareReplay(1)
   );
 
-  private tickService = new TickService();
-
-  private subscription = new rx.Subscription();
+  private readonly subscription = new rx.Subscription();
 
   private get state(): State {
     return this.state$.value;
   }
 
+  constructor(private tickService: TickService) {}
+
   ngOnInit(): void {
-    //  Handle inputs from services
+    //  Handle inputs from outside the component
     this.subscription.add(this.tickService.tick$.pipe(
       op.tap(() => this.tick())
     ).subscribe());
@@ -141,4 +142,5 @@ export class CounterComponent implements OnInit, OnDestroy {
     const color = (this.state.color === value) ? '' : value;
     this.updateState({color});
   }
+
 }

@@ -118,4 +118,3 @@ export class CounterComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 }
-

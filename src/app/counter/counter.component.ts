@@ -17,7 +17,7 @@ import { mapNumber } from './counter.operators';
 })
 export class CounterComponent implements OnInit, OnDestroy {
 
-  // collect streams
+  // collect input streams
   start$ = new rx.Subject<any>();
   start(): void { this.start$.next(true); }
 
@@ -71,19 +71,19 @@ export class CounterComponent implements OnInit, OnDestroy {
     this.color$.pipe(op.map(color => ({color}))),
   );
 
-  // collect all inputs
+  // Collects all inputs
   input$: rx.Observable<Input> = rx.merge(
     this.externalInput.asObservable(),
     this.internalInput$,
   );
 
-  // state is reduced from input
+  // Next state is derived from current state and input event
   state$: rx.Observable<State> = this.input$.pipe(
     op.scan(reduceState, this.initialState),
     op.startWith(this.initialState)
   );
 
-  // observe state to trigger side-effect
+  // Triggers side-effects from state transitions
   tick$: rx.Observable<Input> = this.state$.pipe(
     op.distinctUntilChanged((oldState, newState) => (
       oldState.active === newState.active
@@ -95,7 +95,7 @@ export class CounterComponent implements OnInit, OnDestroy {
     op.mapTo({tick: 1})
   );
 
-  // map State to View
+  // Transforms state to view
   view$: rx.Observable<View> = this.state$.pipe(
     op.map(state => ({
       digits: String(state.count).split(''),
